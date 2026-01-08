@@ -118,3 +118,5 @@ Notes
 The current database is in-memory; all data is lost on application restart. For persistence, configure H2 with a file-based URL:
 
 spring.datasource.url=jdbc:h2:file:./walletdb
+
+A Spring Boot-based wallet management system that allows users to create, fund, and debit wallets. The system uses H2 in-memory database for development and supports Swagger/OpenAPI documentation.
