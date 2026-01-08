@@ -9,8 +9,5 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class WalletRes {
     private String walletId;
-    private String userId;
     private BigDecimal balance;
-    // private String firstName;
-    // private String lastName;
 }

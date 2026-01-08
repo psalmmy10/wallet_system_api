@@ -3,6 +3,7 @@ package com.wallet_system.exception;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.wallet_system.dto.response.ValidationErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,20 +28,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", Instant.now().toString());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Bad Request");
-        response.put("path", ex.getParameter().getMethod().getName()); 
-
-        Map<String, String> fieldErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(err -> {
-            String field = ((FieldError) err).getField();
-            String message = err.getDefaultMessage();
-            fieldErrors.put(field, message);
-        });
-        response.put("validationErrors", fieldErrors);
+    public ResponseEntity<ValidationErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        ValidationErrorResponse response = ValidationErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .validationErrors(ex.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage)))
+                .build();
 
         return ResponseEntity.badRequest().body(response);
     }

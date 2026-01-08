@@ -132,7 +132,6 @@ public class WalletService {
     private WalletRes mapToWalletRes(Wallet wallet) {
         return new WalletRes(
                 wallet.getId().toString(),
-                wallet.getUser().getUserId(),
                 wallet.getBalance()
         );
     }
