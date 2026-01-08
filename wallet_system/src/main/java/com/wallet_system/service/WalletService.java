@@ -3,6 +3,9 @@ package com.wallet_system.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import com.wallet_system.constant.TransactioType;
+import com.wallet_system.dao.Transaction;
 import com.wallet_system.dao.User;
 import com.wallet_system.dao.Wallet;
 import com.wallet_system.dto.request.DebitWalletReq;
@@ -11,12 +14,15 @@ import com.wallet_system.dto.response.FundWalletRes;
 import com.wallet_system.dto.response.WalletRes;
 import com.wallet_system.exception.BusinessRuleException;
 import com.wallet_system.exception.WalletNotFoundException;
+import com.wallet_system.repository.TransactionRepository;
 import com.wallet_system.repository.UserRepository;
 import com.wallet_system.repository.WalletRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +30,7 @@ public class WalletService {
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
 
     @Transactional
     public WalletRes createWallet(String userId) {
@@ -59,12 +66,27 @@ public class WalletService {
                 .orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
 
         wallet.setBalance(wallet.getBalance().add(req.getAmount()));
-        Wallet updatedWallet = walletRepository.save(wallet);
+        walletRepository.save(wallet);
 
-        return mapToFundWalletRes(updatedWallet, req.getAmount());
+        transactionRepository.save(Transaction.builder()
+                .wallet(wallet)
+                .transactionType(TransactioType.CREDIT)
+                .amount(req.getAmount())
+                .createdOn(Instant.now())
+                .build());
+
+        return mapToFundWalletRes(wallet, req.getAmount());
     }
 
-    
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionHistory(Long walletId, TransactioType type) {
+        Wallet wallet = walletRepository.findById(walletId)
+                .orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
+
+        return transactionRepository.findByWalletAndTransactionTypeOrderByCreatedOnDesc(wallet, type);
+    }
+
+
     @Transactional
     public WalletRes debitWallet(Long walletId, DebitWalletReq req) {
         validateAmount(req.getAmount());
@@ -77,10 +99,18 @@ public class WalletService {
         }
 
         wallet.setBalance(wallet.getBalance().subtract(req.getAmount()));
-        Wallet updatedWallet = walletRepository.save(wallet);
+        walletRepository.save(wallet);
 
-        return mapToWalletRes(updatedWallet);
+        transactionRepository.save(Transaction.builder()
+                .wallet(wallet)
+                .transactionType(TransactioType.DEBIT)
+                .amount(req.getAmount())
+                .createdOn(Instant.now())
+                .build());
+
+        return mapToWalletRes(wallet);
     }
+
 
     @Transactional(readOnly = true)
     public WalletRes getWalletDetails(Long walletId) {

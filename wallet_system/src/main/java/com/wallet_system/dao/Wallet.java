@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+import com.wallet_system.constant.TransactioType;
+
 @Entity
 @Table(name = "wallets")
 @Data
@@ -20,4 +22,6 @@ public class Wallet extends BaseEntity {
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
+
+    private TransactioType transactionType;;
 }

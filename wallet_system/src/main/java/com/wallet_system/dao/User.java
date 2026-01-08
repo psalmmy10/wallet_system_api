@@ -17,10 +17,6 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String userId;
 
-    private String firstName;
-
-    private String lastName;
-
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private Wallet wallet;
