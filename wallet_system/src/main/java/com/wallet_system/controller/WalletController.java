@@ -5,6 +5,7 @@ import com.wallet_system.dao.Transaction;
 import com.wallet_system.dto.request.DebitWalletReq;
 import com.wallet_system.dto.request.FundWalletReq;
 import com.wallet_system.dto.response.FundWalletRes;
+import com.wallet_system.dto.response.TransactionDto;
 import com.wallet_system.dto.response.WalletRes;
 import com.wallet_system.service.WalletService;
 
@@ -51,19 +52,20 @@ public class WalletController {
 
     @Operation(summary = "Get transaction history by type (DEBIT or CREDIT)")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Transaction history retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = Transaction.class))),
-            @ApiResponse(responseCode = "404", description = "Wallet not found",
-                    content = @Content(schema = @Schema(implementation = String.class)))
-    })
-    @GetMapping("/{walletId}/transactions")
-    public ResponseEntity<List<Transaction>> getTransactionHistory(
-            @PathVariable Long walletId,
-            @RequestParam TransactioType type) {
+                @ApiResponse(responseCode = "200", description = "Transaction history retrieved successfully",
+                        content = @Content(schema = @Schema(implementation = TransactionDto.class))),
+                @ApiResponse(responseCode = "404", description = "Wallet not found",
+                        content = @Content(schema = @Schema(implementation = String.class)))
+     })
+        @GetMapping("/{walletId}/transactions")
+        public ResponseEntity<List<TransactionDto>> getTransactionHistory(
+                @PathVariable Long walletId,
+                @RequestParam TransactioType type) {
         log.info("Fetching {} transactions for walletId {}", type, walletId);
-        List<Transaction> transactions = walletService.getTransactionHistory(walletId, type);
+        List<TransactionDto> transactions = walletService.getTransactionHistory(walletId, type);
         return ResponseEntity.ok(transactions);
     }
+
 
     @Operation(summary = "Fund a wallet")
     @ApiResponses({

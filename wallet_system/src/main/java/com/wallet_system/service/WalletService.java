@@ -11,6 +11,7 @@ import com.wallet_system.dao.Wallet;
 import com.wallet_system.dto.request.DebitWalletReq;
 import com.wallet_system.dto.request.FundWalletReq;
 import com.wallet_system.dto.response.FundWalletRes;
+import com.wallet_system.dto.response.TransactionDto;
 import com.wallet_system.dto.response.WalletRes;
 import com.wallet_system.exception.BusinessRuleException;
 import com.wallet_system.exception.WalletNotFoundException;
@@ -79,11 +80,19 @@ public class WalletService {
     }
 
     @Transactional(readOnly = true)
-    public List<Transaction> getTransactionHistory(Long walletId, TransactioType type) {
+    public List<TransactionDto> getTransactionHistory(Long walletId, TransactioType type) {
         Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
 
-        return transactionRepository.findByWalletAndTransactionTypeOrderByCreatedOnDesc(wallet, type);
+        List<Transaction> transactions = transactionRepository.findByWalletAndTransactionTypeOrderByCreatedOnDesc(wallet, type);
+
+        return transactions.stream()
+                .map(tx -> TransactionDto.builder()
+                        .transactionType(tx.getTransactionType())
+                        .amount(tx.getAmount())
+                        .createdOn(tx.getCreatedOn())
+                        .build())
+                .toList();
     }
 
 
