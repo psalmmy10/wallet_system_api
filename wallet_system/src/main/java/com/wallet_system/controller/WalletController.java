@@ -38,7 +38,7 @@ public class WalletController {
 
     @Operation(summary = "Create a new wallet for a user")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Wallet created successfully",
+            @ApiResponse(responseCode = "201", description = "Wallet created successfully",
                     content = @Content(schema = @Schema(implementation = WalletRes.class))),
             @ApiResponse(responseCode = "400", description = "Wallet already exists for user",
                     content = @Content(schema = @Schema(implementation = String.class)))
