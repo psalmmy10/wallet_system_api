@@ -1,8 +1,9 @@
-package com.wallet_system.repository;
+package com.wallet_system.dao.repository;
 
 import com.wallet_system.constant.TransactioType;
-import com.wallet_system.dao.Transaction;
-import com.wallet_system.dao.Wallet;
+import com.wallet_system.dao.entity.Transaction;
+import com.wallet_system.dao.entity.Wallet;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

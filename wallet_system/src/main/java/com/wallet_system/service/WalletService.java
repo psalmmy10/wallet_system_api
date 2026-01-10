@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.wallet_system.constant.TransactioType;
-import com.wallet_system.dao.Transaction;
-import com.wallet_system.dao.User;
-import com.wallet_system.dao.Wallet;
+import com.wallet_system.dao.entity.Transaction;
+import com.wallet_system.dao.entity.User;
+import com.wallet_system.dao.entity.Wallet;
+import com.wallet_system.dao.repository.TransactionRepository;
+import com.wallet_system.dao.repository.UserRepository;
+import com.wallet_system.dao.repository.WalletRepository;
 import com.wallet_system.dto.request.DebitWalletReq;
 import com.wallet_system.dto.request.FundWalletReq;
 import com.wallet_system.dto.response.FundWalletRes;
@@ -15,9 +18,6 @@ import com.wallet_system.dto.response.TransactionDto;
 import com.wallet_system.dto.response.WalletRes;
 import com.wallet_system.exception.BusinessRuleException;
 import com.wallet_system.exception.WalletNotFoundException;
-import com.wallet_system.repository.TransactionRepository;
-import com.wallet_system.repository.UserRepository;
-import com.wallet_system.repository.WalletRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 

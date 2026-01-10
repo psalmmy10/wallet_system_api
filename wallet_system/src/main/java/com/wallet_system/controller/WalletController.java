@@ -1,7 +1,7 @@
 package com.wallet_system.controller;
 
 import com.wallet_system.constant.TransactioType;
-import com.wallet_system.dao.Transaction;
+import com.wallet_system.dao.entity.Transaction;
 import com.wallet_system.dto.request.DebitWalletReq;
 import com.wallet_system.dto.request.FundWalletReq;
 import com.wallet_system.dto.response.FundWalletRes;

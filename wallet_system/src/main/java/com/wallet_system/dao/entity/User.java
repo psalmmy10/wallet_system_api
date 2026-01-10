@@ -1,4 +1,4 @@
-package com.wallet_system.dao;
+package com.wallet_system.dao.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
